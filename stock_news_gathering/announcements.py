@@ -4,7 +4,7 @@ import requests
 import time
 import datetime
 import logging
-import config
+from stock_news_gathering import config
 import dateutil.parser
 
 
