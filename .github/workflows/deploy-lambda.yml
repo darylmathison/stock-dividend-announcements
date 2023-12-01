@@ -22,8 +22,8 @@ jobs:
       - name: Build Zip file
         run: bash ./create_package.sh
       - name: Push ZipFile Up
-        run: aws s3 cp --region ${{ vars.AWS_REGION }} ./{env.FILENAME} s3://function-bucket-drm
+        run: aws s3 cp --region ${{ vars.AWS_REGION }} ./${{ env.FILENAME }} s3://function-bucket-drm
       - name: Update Lambda
-        run: aws lambda update-function-code --function-name app-dividends --s3-bucket function-bucket-drm --s3-key {env.FILENAME}
+        run: aws lambda update-function-code --function-name app-dividends --s3-bucket function-bucket-drm --s3-key ${{ env.FILENAME }}
       - name: Zip file Cleanup
-        run: aws s3 rm --region ${{ vars.AWS_REGION }} s3://function-bucket-drm/{env.FILENAME}
+        run: aws s3 rm --region ${{ vars.AWS_REGION }} s3://function-bucket-drm/${{ env.FILENAME }}
