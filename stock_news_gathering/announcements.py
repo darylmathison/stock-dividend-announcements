@@ -1,11 +1,11 @@
-import json
-
-import requests
-import time
 import datetime
 import logging
-from stock_news_gathering import config
+import time
+
 import dateutil.parser
+import requests
+
+from stock_news_gathering import config
 
 
 def get_stocks(the_day: datetime.datetime, settings: config.Config):
@@ -32,7 +32,7 @@ def handle(event, context):
     end = start + datetime.timedelta(days=30)
     dividends = [asset for asset in get_stocks(start, settings) if
                  dateutil.parser.parse(asset['ex_dividend_date']) <= end]
-    return json.dumps(dividends)
+    return dividends
 
 
 if __name__ == '__main__':
