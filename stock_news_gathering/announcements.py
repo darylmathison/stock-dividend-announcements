@@ -14,19 +14,29 @@ def get_stocks(the_day: datetime.datetime, settings: config.Config):
     date = (the_day + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
     uri = settings.uri.format(apikey=settings.apikey, date=date)
     while repeat:
-        r = requests.get(uri).json()
-        time.sleep(60/5)
-        if 'next_url' in r:
-            uri = r['next_url'] + '&apiKey=' + settings.apikey
+        try:
+            r = requests.get(uri)
+            r.raise_for_status()
+            r = r.json()
+            time.sleep(60 / 5)
+            if 'next_url' in r:
+                uri = r['next_url'] + '&apiKey=' + settings.apikey
+                repeat = True
+            else:
+                repeat = False
+            if 'results' in r:
+                size += len(r['results'])
+                logging.info(f"size: {size}, ex_dividend_date: {r['results'][-1]['ex_dividend_date']}")
+                for asset in r['results']:
+                    if asset['currency'] == 'USD':
+                        yield asset
+        except requests.exceptions.HTTPError as err:
+            logging.info(err)
+            time.sleep(30)
             repeat = True
-        else:
+        except Exception as e:
+            logging.error(e)
             repeat = False
-        if 'results' in r:
-            size += len(r['results'])
-            logging.info(f"size: {size}, ex_dividend_date: {r['results'][-1]['ex_dividend_date']}")
-            for asset in r['results']:
-                if asset['currency'] == 'USD':
-                    yield asset
 
 
 def handle(event, context):
