@@ -62,6 +62,15 @@ class Announcement:
             "cash_amount": self.cash_amount_decimal,
         }
 
+    def to_dict(self):
+        return {
+            "symbol": self.symbol,
+            "ex_dividend_date": self.ex_dividend_date,
+            "record_date": self.record_date,
+            "pay_date": self.pay_date,
+            "cash_amount": self.cash_amount,
+        }
+
     def __str__(self):
         return f"{self.symbol} {self.ex_dividend_date} {self.record_date} {self.pay_date} {self.cash_amount}"
 

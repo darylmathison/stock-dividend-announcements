@@ -71,7 +71,7 @@ def get_announcements(event, context):
 
     announcements = table.get_announcements(start, end)
     if announcements:
-        return announcements
+        return [announcements.to_dict() for announcements in announcements]
 
 
 if __name__ == "__main__":
