@@ -1,6 +1,6 @@
 import unittest
 import os
-from algo.config import Config
+from stock_news_gathering.config import Config
 
 
 os.environ["FOR_TEST"] = "whyme"
