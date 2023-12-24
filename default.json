@@ -1,4 +1,4 @@
 {
-  "uri": "https://api.polygon.io/v3/reference/dividends?ex_dividend_date.gte={date}&order=asc&sort=ex_dividend_date&apiKey={apikey}",
+  "uri": "https://api.polygon.io/v3/reference/dividends?ex_dividend_date.gte={date}&limit=20&order=asc&sort=ex_dividend_date&apiKey={apikey}",
   "table": "dividend_announcements"
 }
