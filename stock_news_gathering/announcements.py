@@ -66,7 +66,7 @@ def save_announcements(event, context):
 def get_announcements(event, context):
     settings = config.Config()
     table = TableWrapper(settings.table)
-    start = datetime.datetime.now()
+    start = datetime.datetime.now() + datetime.timedelta(days=3)
     end = start + datetime.timedelta(weeks=int(settings.weeks))
 
     announcements = table.get_announcements(start, end)
