@@ -19,6 +19,18 @@ class Config:
         else:
             raise AttributeError(f"There is no {item}")
 
-    def as_bool(self, item):
+    def as_bool(self, item) -> bool:
         prop = self.__getattr__(item).upper()
         return prop == "TRUE"
+
+    def as_float(self, item, default) -> float:
+        try:
+            return float(self.__getattr__(item))
+        except AttributeError:
+            return float(default)
+
+    def as_int(self, item, default) -> int:
+        try:
+            return int(self.__getattr__(item))
+        except AttributeError:
+            return int(default)

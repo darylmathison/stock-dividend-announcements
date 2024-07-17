@@ -47,7 +47,7 @@ def save_announcements(event, context):
     settings = config.Config()
     table = TableWrapper(settings.table)
     start = datetime.datetime.now()
-    end = start + datetime.timedelta(weeks=settings.weeks)
+    end = start + datetime.timedelta(weeks=settings.as_int("weeks", 3))
 
     last_date = table.get_last_date(start, end)
     if last_date.date() < (end + datetime.timedelta(days=1)).date():
@@ -55,12 +55,26 @@ def save_announcements(event, context):
 
         for asset in get_stocks(last_date, settings):
             if dateutil.parser.parse(asset["ex_dividend_date"]).date() <= end.date():
-                table.add_announcement(Announcement(**asset))
+                logging.info("Adding %s", asset["ticker"])
+                if test_asset(asset):
+                    if "record_date" not in asset:
+                        asset["record_date"] = asset["ex_dividend_date"]
+                    table.add_announcement(Announcement(**asset))
+                else:
+                    logging.info(f"{asset['ticker']} is missing required fields")
             else:
                 return "OK"
     else:
         logging.info("date exists")
         return "OK"
+
+
+def test_asset(asset):
+    must_have = ["ticker", "pay_date", "ex_dividend_date", "cash_amount"]
+    for key in must_have:
+        if key not in asset:
+            return False
+    return True
 
 
 def get_announcements(event, context):
