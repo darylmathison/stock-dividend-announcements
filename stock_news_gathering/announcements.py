@@ -44,6 +44,7 @@ def get_stocks(the_day: datetime.datetime, settings: config.Config):
 
 
 def save_announcements(event, context):
+    logging.getLogger().setLevel(logging.INFO)
     settings = config.Config()
     table = TableWrapper(settings.table)
     start = datetime.datetime.now()
@@ -78,6 +79,7 @@ def test_asset(asset):
 
 
 def get_announcements(event, context):
+    logging.getLogger().setLevel(logging.INFO)
     settings = config.Config()
     table = TableWrapper(settings.table)
     start = datetime.datetime.now() + datetime.timedelta(days=3)
