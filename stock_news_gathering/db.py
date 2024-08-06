@@ -120,11 +120,18 @@ class TableWrapper:
             )
 
             # The response will contain the items that match the condition
-            items = response["Items"]
-            if items:
-                return [Announcement.from_dynamo_db(item) for item in items]
-            else:
-                return []
+            items = [Announcement.from_dynamo_db(item) for item in response["Items"]]
+            while "LastEvaluatedKey" in response:
+                response = self.table.scan(
+                    FilterExpression=Key("ex_dividend_date").between(
+                        start_timestamp, end_timestamp
+                    ),
+                    ExclusiveStartKey=response["LastEvaluatedKey"],
+                )
+                items.extend(
+                    Announcement.from_dynamo_db(item) for item in response["Items"]
+                )
+            return items
         except ClientError as err:
             logger.error(
                 "Couldn't find latest announcements to table %s. Here's why: %s: %s",
