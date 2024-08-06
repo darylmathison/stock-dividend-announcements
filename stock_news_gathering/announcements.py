@@ -60,6 +60,10 @@ def save_announcements(event, context):
                 if test_asset(asset):
                     if "record_date" not in asset:
                         asset["record_date"] = asset["ex_dividend_date"]
+                    if "declared_date" not in asset:
+                        asset["declared_date"] = datetime.datetime.now().strftime(
+                            "%Y-%m-%d"
+                        )
                     table.add_announcement(Announcement(**asset))
                 else:
                     logging.info(f"{asset['ticker']} is missing required fields")
@@ -71,7 +75,14 @@ def save_announcements(event, context):
 
 
 def test_asset(asset):
-    must_have = ["ticker", "pay_date", "ex_dividend_date", "cash_amount"]
+    must_have = [
+        "ticker",
+        "pay_date",
+        "ex_dividend_date",
+        "cash_amount",
+        "frequency",
+        "dividend_type",
+    ]
     for key in must_have:
         if key not in asset:
             return False
@@ -92,3 +103,4 @@ def get_announcements(event, context):
 
 if __name__ == "__main__":
     print(get_announcements(None, None))
+    # print(save_announcements(None, None))

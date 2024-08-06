@@ -28,6 +28,10 @@ class Announcement:
         record_date: str,
         pay_date: str,
         cash_amount: str,
+        declared_date: str,
+        currency: str,
+        frequency: str,
+        dividend_type: str,
         *args,
         **kwargs,
     ):
@@ -36,6 +40,10 @@ class Announcement:
         self.record_date = record_date
         self.pay_date = pay_date
         self.cash_amount = cash_amount
+        self.declared_date = declared_date
+        self.currency = currency
+        self.frequency = frequency
+        self.dividend_type = dividend_type
 
     @property
     def ex_dividend_decimal(self):
@@ -50,8 +58,8 @@ class Announcement:
         return str_to_decimal(self.pay_date)
 
     @property
-    def cash_amount_decimal(self):
-        return Decimal(str(self.cash_amount))
+    def declared_decimal(self):
+        return str_to_decimal(self.declared_date)
 
     def to_dynamo_db(self):
         return {
@@ -59,7 +67,11 @@ class Announcement:
             "ex_dividend_date": self.ex_dividend_decimal,
             "record_date": self.record_decimal,
             "pay_date": self.pay_decimal,
-            "cash_amount": self.cash_amount_decimal,
+            "cash_amount": self.cash_amount,
+            "declared_date": self.declared_decimal,
+            "currency": self.currency,
+            "frequency": self.frequency,
+            "dividend_type": self.dividend_type,
         }
 
     def to_dict(self):
@@ -69,22 +81,35 @@ class Announcement:
             "record_date": self.record_date,
             "pay_date": self.pay_date,
             "cash_amount": self.cash_amount,
+            "declared_date": self.declared_date,
+            "currency": self.currency,
+            "frequency": self.frequency,
+            "dividend_type": self.dividend_type,
         }
 
     def __str__(self):
-        return f"{self.symbol} {self.ex_dividend_date} {self.record_date} {self.pay_date} {self.cash_amount}"
+        return f"{self.symbol} {self.ex_dividend_date} {self.record_date} {self.pay_date} {self.cash_amount} {self.declared_date} {self.currency} {self.frequency} {self.dividend_type}"
 
     def __repr__(self):
-        return f"Announcement(symbol={self.symbol} ex_dividend_date={self.ex_dividend_date} record_date={self.record_date} pay_date={self.pay_date} cash_amount={self.cash_amount})"
+        return f"Announcement(symbol={self.symbol} ex_dividend_date={self.ex_dividend_date} record_date={self.record_date} pay_date={self.pay_date} cash_amount={self.cash_amount} declared_date={self.declared_date} currency={self.currency} frequency={self.frequency} dividend_type={self.dividend_type})"
 
     @staticmethod
     def from_dynamo_db(data):
+        if "declared_date" in data:
+            declared_date = decimal_date_to_str(data["declared_date"])
+        else:
+            declared_date = ""
+
         return Announcement(
             data["symbol"],
             decimal_date_to_str(data["ex_dividend_date"]),
             decimal_date_to_str(data["record_date"]),
             decimal_date_to_str(data["pay_date"]),
-            data["cash_amount"],
+            str(data["cash_amount"]),
+            declared_date,
+            data.get("currency", "USD"),
+            data.get("frequency", ""),
+            data.get("dividend_type", ""),
         )
 
 
