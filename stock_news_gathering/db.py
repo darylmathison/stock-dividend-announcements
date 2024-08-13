@@ -67,10 +67,10 @@ class Announcement:
             "ex_dividend_date": self.ex_dividend_decimal,
             "record_date": self.record_decimal,
             "pay_date": self.pay_decimal,
-            "cash_amount": self.cash_amount,
+            "cash_amount": str(self.cash_amount),
             "declared_date": self.declared_decimal,
             "currency": self.currency,
-            "frequency": self.frequency,
+            "frequency": str(self.frequency),
             "dividend_type": self.dividend_type,
         }
 
@@ -105,7 +105,7 @@ class Announcement:
             decimal_date_to_str(data["ex_dividend_date"]),
             decimal_date_to_str(data["record_date"]),
             decimal_date_to_str(data["pay_date"]),
-            str(data["cash_amount"]),
+            data["cash_amount"],
             declared_date,
             data.get("currency", "USD"),
             data.get("frequency", ""),
